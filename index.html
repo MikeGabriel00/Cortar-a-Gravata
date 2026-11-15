@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corte da Gravata Virtual - Casamento</title>
+  
+  <link rel="preconnect" href="https://googleapis.com">
+  <link rel="preconnect" href="https://gstatic.com" crossorigin>
+  <link href="https://googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://jsdelivr.net"></script>
+
+  <style>
+    :root {
+      --bg-color: #FAF9F5;
+      --card-bg: #FFFFFF;
+      --olive: #556B2F;
+      --olive-dark: #3E4F22;
+      --olive-light: #EFF2E9;
+      --gold: #C5A059;
+      --gold-light: #F7F1E3;
+      --text-main: #2C3028;
+      --text-muted: #666B60;
+      --border-color: #E2E5DC;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card-bg);
+      border-radius: 24px;
+      box-shadow: 0 12px 32px rgba(85, 107, 47, 0.08);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--olive) 0%, var(--olive-dark) 100%);
+      color: #FFFFFF;
+      text-align: center;
+      padding: 36px 24px 32px;
+      position: relative;
+    }
+
+    .tie-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(197, 160, 89, 0.5);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .tie-icon svg {
+      width: 30px;
+      height: 30px;
+      fill: var(--gold);
+    }
+
+    .couple-names {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #E6D3A7;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      line-height: 1.2;
+      margin-bottom: 14px;
+      font-weight: 700;
+    }
+
+    .prize-badge {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px dashed var(--gold);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      color: #FAF9F5;
+    }
+
+    .prize-badge strong {
+      color: #F3DFB1;
+    }
+
+    .content {
+      padding: 24px;
+    }
+
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--olive-dark);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-number {
+      background: var(--gold);
+      color: white;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+       .values-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .value-btn {
+      background: var(--bg-color);
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      padding: 12px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .value-btn:hover {
+      border-color: var(--gold);
+    }
+
+    .value-btn.active {
+      background: var(--olive-light);
+      border-color: var(--olive);
+      box-shadow: 0 4px 12px rgba(85, 107, 47, 0.12);
+    }
+
+    .value-amount {
+      display: block;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--olive-dark);
+    }
+
+    .value-label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .custom-value-box {
+      display: none;
+      margin-top: 10px;
+    }
+
+    .custom-value-box.visible {
+      display: block;
+    }
+
+    .pix-card {
+      background: var(--gold-light);
+      border: 1px solid rgba(197, 160, 89, 0.4);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .qr-placeholder {
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 16px;
+      background: #FFFFFF;
+      border: 1px dashed var(--gold);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    .qr-placeholder img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 6px;
+    }
+
+    .pix-info {
+      font-size: 0.88rem;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+
+    .pix-key-box {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-family: monospace;
+      font-size: 0.95rem;
+      color: var(--olive-dark);
+      font-weight: 600;
+      word-break: break-all;
+      margin-bottom: 12px;
+    }
+
+    .btn-copy {
+      width: 100%;
+      background: var(--gold);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn-copy:hover {
+      background: #B38E46;
+    }
+
+    .btn-copy.copied {
+      background: var(--olive);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    .required-star {
+      color: #C0392B;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      background: var(--bg-color);
+      transition: border-color 0.2s;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--olive);
+      background: #FFFFFF;
+    }
+
+    .file-upload-area {
+      border: 2px dashed var(--olive);
+      background: var(--olive-light);
+      border-radius: 14px;
+      padding: 20px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .file-upload-area:hover {
+      background: #E4E9DA;
+    }
+
+    .file-upload-area input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .upload-icon {
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .upload-text {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--olive-dark);
+    }
+
+    .upload-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .file-preview {
+      display: none;
+      margin-top: 12px;
+      padding: 10px;
+      background: #FFFFFF;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .file-preview.visible {
+      display: flex;
+    }
+
+    .file-preview img {
+      width: 44px;
+      height: 44px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .file-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--olive-dark);
+      word-break: break-all;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--olive);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn-submit:disabled {
+      background: #BCC2B4;
+      cursor: not-allowed;
+      opacity: 0.75;
+    }
+
+    .btn-submit:not(:disabled):hover {
+      background: var(--olive-dark);
+      transform: translateY(-1px);
+    }
+
+    .success-screen {
+      display: none;
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .ticket-card {
+      background: var(--bg-color);
+      border: 2px dashed var(--gold);
+      border-radius: 20px;
+      padding: 24px 20px;
+      margin: 20px 0;
+      position: relative;
+    }
+
+    .ticket-badge {
+      background: var(--olive);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    .lucky-number-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .lucky-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1.1;
+      margin: 6px 0 14px;
+    }
+
+    .guest-confirmed-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--olive-dark);
+      border-top: 1px solid var(--border-color);
+      padding-top: 12px;
+    }
+
+    .btn-reset {
+      background: transparent;
+      border: 1.5px solid var(--olive);
+      color: var(--olive);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="tie-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 2h6l-1.5 4h-3L9 2zm1.5 5h3l2.5 11-4 4-4-4 2.5-11z"/>
+        </svg>
+      </div>
+      <div class="couple-names">Casamento de [Jenifer] & [Maicon]</div>
+      <h1>Corte a Gravata dos Noivos!</h1>
+      
+      <div class="prize-badge">
+        🎁 Ajude na nossa Lua de Mel! Quem participar concorre ao sorteio de <strong>[um jantar especial / uma garrafa de vinho]</strong> na festa!
+      </div>
+    </header>
+
+    <main class="content" id="mainFormContainer">
+      <section class="section">
+        <h2 class="section-title"><span class="step-number">1</span> Escolha sua contribuição</h2>
+        <div class="values-grid">
+          <button type="button" class="value-btn" data-value="20">
+            <span class="value-amount">R$ 20</span>
+            <span class="value-label">Para o cafezinho ☕</span>
+          </button>
+          <button type="button" class="value-btn" data-value="50">
+            <span class="value-amount">R$ 50</span>
+            <span class="value-label">Pedaço da gravata ✂️</span>
+          </button>
+          <button type="button" class="value-btn" data-value="100">
+            <span class="value-amount">R$ 100</span>
+            <span class="value-label">Padrinho Honorário 🥂</span>
+          </button>
+          <button type="button" class="value-btn" data-value="outro">
+            <span class="value-amount">Outro valor</span>
+            <span class="value-label">Você manda! 💸</span>
+          </button>
+        </div>
+
+        <div class="custom-value-box" id="customValueBox">
+          <input type="number" id="customValueInput" placeholder="Digite o valor em R$ (ex: 150)" min="1">
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title"><span class="step-number">2</span> Faça o Pix</h2>
+        <div class="pix-card">
+          <div class="qr-placeholder">
+            <span>📷</span>
+            <span>Espaço para imagem do QR Code Pix (opcional)</span>
+          </div>
+
+          <div class="pix-info">
+            Recebedor: <strong>[Maicon Gabriel Conti Dos Reis]</strong><br>
+            Banco: <strong>[Sicredi]</strong>
+          </div>
+
+          <div class="pix-key-box" id="pixKeyText">[(19) 97155-0458]</div>
+
+          <button type="button" class="btn-copy" id="copyPixBtn">
+            <span id="copyBtnIcon">📋</span>
+            <span id="copyBtnText">Copiar Chave Pix</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="section" style="margin-bottom: 0;">
+        <h2 class="section-title"><span class="step-number">3</span> Entre no Sorteio</h2>
+        
+        <form id="tieForm">
+          <div class="form-group">
+            <label for="guestName">Seu Nome Completo <span class="required-star">*</span></label>
+            <input type="text" id="guestName" name="nome" placeholder="Ex: João Silva" required>
+          </div>
+
+          <div class="form-group">
+            <label for="guestMessage">Recado para os noivos (Opcional)</label>
+            <textarea id="guestMessage" name="mensagem" rows="2" placeholder="Deixe um desejo de felicidades ou uma zoeira..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Anexar Comprovante do Pix <span class="required-star">*</span></label>
+            <div class="file-upload-area">
+              <input type="file" id="receiptFile" name="comprovante" accept="image/png, image/jpeg, application/pdf" required>
+              <span class="upload-icon">📎</span>
+              <div class="upload-text">Toque aqui para anexar o comprovante</div>
+              <div class="upload-hint">Aceita imagens (JPG, PNG) ou PDF</div>
+            </div>
+
+            <div class="file-preview" id="filePreview">
+              <img id="previewImage" src="" alt="Prévia" style="display: none;">
+              <span id="pdfIcon" style="font-size: 1.6rem; display: none;">📄</span>
+              <div class="file-name" id="fileNameDisplay"></div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="submitBtn" disabled>
+            Confirmar e Entrar no Sorteio 🎉
+          </button>
+        </form>
+      </section>
+    </main>
+
+    <section class="success-screen" id="successScreen">
+      <h2 style="font-family: 'Playfair Display', serif; color: var(--olive-dark); font-size: 1.7rem;">
+        Gravata Cortada com Sucesso!
+      </h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">
+        Muito obrigado por fazer parte desse momento e ajudar na nossa lua de mel!
+      </p>
+
+      <div class="ticket-card">
+        <span class="ticket-badge">🎟️ Ticket Oficial do Sorteio</span>
+        <div class="lucky-number-label">Seu número da sorte é:</div>
+        <div class="lucky-number" id="luckyNumberDisplay">#000</div>
+        <div class="guest-confirmed-name" id="confirmedGuestName">Nome do Convidado</div>
+      </div>
+
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
+        Tire um print desta tela para guardar seu número! O sorteio acontecerá durante a festa.
+      </p>
+
+      <button type="button" class="btn-reset" id="resetBtn">Enviar outro comprovante</button>
+    </section>
+  </div>
+  <script>
+    const valueButtons = document.querySelectorAll('.value-btn');
+    const customValueBox = document.getElementById('customValueBox');
+    const customValueInput = document.getElementById('customValueInput');
+    let selectedAmount = '';
+
+    valueButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        valueButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const val = btn.getAttribute('data-value');
+        if (val === 'outro') {
+          customValueBox.classList.add('visible');
+          customValueInput.focus();
+          selectedAmount = customValueInput.value;
+        } else {
+          customValueBox.classList.remove('visible');
+          selectedAmount = val;
+        }
+      });
+    });
+
+    const copyPixBtn = document.getElementById('copyPixBtn');
+    const pixKeyText = document.getElementById('pixKeyText').innerText.trim();
+    const copyBtnText = document.getElementById('copyBtnText');
+    const copyBtnIcon = document.getElementById('copyBtnIcon');
+
+    copyPixBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(pixKeyText).then(() => {
+        copyPixBtn.classList.add('copied');
+        copyBtnIcon.innerText = '✅';
+        copyBtnText.innerText = 'Chave Copiada!';
+
+        setTimeout(() => {
+          copyPixBtn.classList.remove('copied');
+          copyBtnIcon.innerText = '📋';
+          copyBtnText.innerText = 'Copiar Chave Pix';
+        }, 3000);
+      }).catch(() => {
+        alert('Não foi possível copiar automaticamente. Selecione e copie a chave manualmente.');
+      });
+    });
+
+    const guestNameInput = document.getElementById('guestName');
+    const receiptFileInput = document.getElementById('receiptFile');
+    const submitBtn = document.getElementById('submitBtn');
+    const filePreview = document.getElementById('filePreview');
+    const previewImage = document.getElementById('previewImage');
+    const pdfIcon = document.getElementById('pdfIcon');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+
+    function checkFormValidity() {
+      const hasName = guestNameInput.value.trim().length >= 2;
+      const hasFile = receiptFileInput.files.length > 0;
+      submitBtn.disabled = !(hasName && hasFile);
+    }
+
+    guestNameInput.addEventListener('input', checkFormValidity);
+
+    receiptFileInput.addEventListener('change', () => {
+      const file = receiptFileInput.files;
+      if (file) {
+        filePreview.classList.add('visible');
+        fileNameDisplay.innerText = file.name;
+
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            previewImage.src = e.target.result;
+            previewImage.style.display = 'block';
+            pdfIcon.style.display = 'none';
+          };
+          reader.readAsDataURL(file);
+        } else {
+          previewImage.style.display = 'none';
+          pdfIcon.style.display = 'block';
+        }
+      } else {
+        filePreview.classList.remove('visible');
+      }
+      checkFormValidity();
+    });
+
+    const tieForm = document.getElementById('tieForm');
+    const mainFormContainer = document.getElementById('mainFormContainer');
+    const successScreen = document.getElementById('successScreen');
+    const luckyNumberDisplay = document.getElementById('luckyNumberDisplay');
+    const confirmedGuestName = document.getElementById('confirmedGuestName');
+    const resetBtn = document.getElementById('resetBtn');
+
+    tieForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Confirmando participação... ⏳';
+
+      const luckyNumber = Math.floor(100 + Math.random() * 900);
+
+      /* INTEGRAÇÃO REAL (OPCIONAL - PARA RECEBER NO E-MAIL VIA FORMSPREE):
+      const formData = new FormData(tieForm);
+      formData.append('numero_da_sorte', luckyNumber);
+      formData.append('valor_selecionado', selectedAmount || customValueInput.value);
+
+      try {
+        await fetch('SUA_URL_DO_FORMSPREE_AQUI', {
+          method: 'POST',
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        });
+      } catch (error) {
+        console.error('Erro ao enviar:', error);
+      }
+      */
+
+      setTimeout(() => {
+        confirmedGuestName.innerText = guestNameInput.value.trim();
+        luckyNumberDisplay.innerText = `#${luckyNumber}`;
+
+        mainFormContainer.style.display = 'none';
+        successScreen.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#556B2F', '#C5A059', '#FAF9F5']
+        });
+      }, 800);
+    });
+
+    resetBtn.addEventListener('click', () => {
+      tieForm.reset();
+      filePreview.classList.remove('visible');
+      valueButtons.forEach(b => b.classList.remove('active'));
+      customValueBox.classList.remove('visible');
+      submitBtn.innerText = 'Confirmar e Entrar no Sorteio 🎉';
+      submitBtn.disabled = true;
+
+      successScreen.style.display = 'none';
+      mainFormContainer.style.display = 'block';
+    });
+  </script>
+</body>
+</html>
